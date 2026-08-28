@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+qdrant-client
+google-genai
+httpx
+python-dotenv
+pypdf
+rank_bm25
+sse-starlette
+python-multipart
+pydantic

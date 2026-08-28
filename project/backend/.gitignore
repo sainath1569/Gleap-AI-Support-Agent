@@ -1,0 +1,10 @@
+# Backend Secrets & Virtual Environments
+.env
+.env.*
+!.env.example
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.tmp
+.tmp/
