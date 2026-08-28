@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Mic, ArrowUp, ThumbsUp, ThumbsDown, Trash2, FileText, Paperclip } from 'lucide-react';
 import ToolCallCard from './ToolCallCard';
+import { API_URL } from '../api';
 
 /*
   ChatPanel view:
@@ -232,7 +233,7 @@ export default function ChatPanel({
           // Backend parse for PDFs and rich documents
           const formData = new FormData();
           formData.append('file', fileToUpload);
-          const parseRes = await fetch('http://localhost:8000/api/chat/parse-attachment', {
+          const parseRes = await fetch(`${API_URL}/chat/parse-attachment`, {
             method: 'POST',
             body: formData
           });
@@ -255,7 +256,7 @@ export default function ChatPanel({
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch(`${API_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
