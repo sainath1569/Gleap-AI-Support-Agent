@@ -205,7 +205,7 @@ export default function News({ onClose, onArticleStateChange, initialArticleId }
         {/* Scrollable Article Detail */}
         <div className="flex-1 overflow-y-auto">
           {/* Full-width Hero Cover Banner */}
-          <div className="w-full h-64 sm:h-72 bg-gray-100 overflow-hidden relative">
+          <div className="w-full h-48 sm:h-72 bg-gray-100 overflow-hidden relative">
             <img 
               src={selectedArticle.img} 
               alt={selectedArticle.title} 
@@ -214,9 +214,9 @@ export default function News({ onClose, onArticleStateChange, initialArticleId }
           </div>
 
           {/* Article Story Body */}
-          <div className="p-6 sm:p-8 max-w-3xl mx-auto space-y-6">
+          <div className="p-4 sm:p-8 max-w-3xl mx-auto space-y-5 sm:space-y-6">
             <div>
-              <h1 className="text-[25px] sm:text-[28px] font-bold text-gray-900 leading-tight">
+              <h1 className="text-[22px] sm:text-[28px] font-bold text-gray-900 leading-tight">
                 {selectedArticle.title}
               </h1>
 
@@ -301,9 +301,9 @@ export default function News({ onClose, onArticleStateChange, initialArticleId }
   return (
     <div className="flex flex-col h-full bg-white relative">
       {/* Header */}
-      <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shrink-0">
+      <div className="flex justify-between items-center px-4 sm:px-6 py-3.5 sm:py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shrink-0">
         <div className="w-5" />
-        <h2 className="font-semibold text-[17px] text-gray-900">News</h2>
+        <h2 className="font-semibold text-[16px] sm:text-[17px] text-gray-900">News</h2>
         <button 
           onClick={handleClose}
           className="text-gray-500 hover:text-gray-900 transition-colors p-1 -mr-1 rounded-md flex items-center justify-center cursor-pointer"
@@ -317,12 +317,12 @@ export default function News({ onClose, onArticleStateChange, initialArticleId }
       </div>
 
       {/* Category Filter Pills */}
-      <div className="flex items-center justify-center gap-2 py-3 px-4 bg-white shrink-0 border-b border-gray-50">
+      <div className="flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3 px-3 sm:px-4 bg-white shrink-0 border-b border-gray-50 overflow-x-auto scrollbar-hide">
         {['All', 'News', 'Changelogs'].map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`px-4 py-1.5 rounded-full text-xs transition-all cursor-pointer select-none ${
+            className={`px-3.5 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs transition-all cursor-pointer select-none whitespace-nowrap shrink-0 ${
               activeCategory === cat
                 ? 'bg-black text-white font-semibold shadow-sm'
                 : 'bg-gray-100/90 text-gray-600 font-medium hover:bg-gray-200/80'
@@ -334,7 +334,7 @@ export default function News({ onClose, onArticleStateChange, initialArticleId }
       </div>
 
       {/* Article feed */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-28">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3.5 sm:space-y-4 pb-28">
         {filteredArticles.map((a) => (
           <div 
             key={a.id} 
@@ -342,7 +342,7 @@ export default function News({ onClose, onArticleStateChange, initialArticleId }
             className="bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-md transition-all cursor-pointer group"
           >
             {/* Visual Cover Asset */}
-            <div className="h-44 w-full overflow-hidden bg-gray-100 relative">
+            <div className="h-38 sm:h-44 w-full overflow-hidden bg-gray-100 relative">
               <img 
                 src={a.img} 
                 alt={a.title} 
@@ -351,7 +351,7 @@ export default function News({ onClose, onArticleStateChange, initialArticleId }
             </div>
 
             {/* Content info */}
-            <div className="p-4 flex items-start justify-between gap-3">
+            <div className="p-3.5 sm:p-4 flex items-start justify-between gap-2.5 sm:gap-3">
               <div className="flex-1 min-w-0 pr-1">
                 <h3 className="font-bold text-[15px] text-gray-900 mb-1 leading-snug group-hover:text-black">
                   {a.title}

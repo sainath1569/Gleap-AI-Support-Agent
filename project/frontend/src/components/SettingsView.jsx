@@ -155,9 +155,9 @@ export default function SettingsView({ onClose }) {
   return (
     <div className="flex flex-col h-full bg-white relative">
       {/* Settings Header */}
-      <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shrink-0">
+      <div className="flex justify-between items-center px-4 sm:px-6 py-3.5 sm:py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shrink-0">
         <div className="w-5" />
-        <h2 className="font-semibold text-[17px] text-gray-900">Settings</h2>
+        <h2 className="font-semibold text-[16px] sm:text-[17px] text-gray-900">Settings</h2>
         <button 
           onClick={onClose} 
           className="text-gray-500 hover:text-gray-900 transition-colors p-1 -mr-1 rounded-md flex items-center justify-center cursor-pointer"
@@ -170,10 +170,10 @@ export default function SettingsView({ onClose }) {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6 pb-28">
+      <div className="flex-1 overflow-y-auto px-3.5 sm:px-5 py-3.5 sm:py-4 space-y-4 sm:space-y-6 pb-28">
 
         {/* 1. REAL QDRANT KNOWLEDGE SOURCES */}
-        <div className="bg-white rounded-2xl border border-gray-200/90 p-4 shadow-xs">
+        <div className="bg-white rounded-2xl border border-gray-200/90 p-3.5 sm:p-4 shadow-xs">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center">

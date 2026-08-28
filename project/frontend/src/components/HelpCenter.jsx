@@ -288,7 +288,7 @@ export default function HelpCenter({ onClose }) {
     return (
       <div className="flex flex-col h-full bg-white relative animate-in fade-in duration-150">
         {/* Detail Header: < Back | Category Name | × Close */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white shrink-0">
+        <div className="flex items-center justify-between px-3.5 sm:px-5 py-3.5 sm:py-4 border-b border-gray-100 bg-white shrink-0">
           <button 
             onClick={() => {
               if (activeArticle) {
@@ -320,17 +320,17 @@ export default function HelpCenter({ onClose }) {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto px-5 py-4 pb-28">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-3.5 sm:py-4 pb-28">
           {activeArticle ? (
             /* Sub-article Full View */
             <div className="space-y-4">
-              <h1 className="text-[22px] font-bold text-gray-900 leading-tight">
+              <h1 className="text-[20px] sm:text-[22px] font-bold text-gray-900 leading-tight">
                 {activeArticle.title} {activeArticle.emoji}
               </h1>
-              <p className="text-[14px] text-gray-600 leading-relaxed">
+              <p className="text-[13.5px] sm:text-[14px] text-gray-600 leading-relaxed">
                 {activeArticle.description}
               </p>
-              <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 text-xs text-gray-600 leading-relaxed">
+              <div className="p-3.5 sm:p-4 bg-gray-50 rounded-xl border border-gray-100 text-xs text-gray-600 leading-relaxed">
                 Need more help configuring {activeArticle.title.toLowerCase()}? Contact our support team or explore related documentation guides.
               </div>
             </div>
@@ -339,10 +339,10 @@ export default function HelpCenter({ onClose }) {
             <div>
               {/* Category Title & Subtitle */}
               <div className="mb-4">
-                <h1 className="text-[22px] font-bold text-gray-900 mb-1">
+                <h1 className="text-[20px] sm:text-[22px] font-bold text-gray-900 mb-1">
                   {selectedCategory.title}
                 </h1>
-                <p className="text-[13.5px] text-gray-500 leading-relaxed">
+                <p className="text-[13px] sm:text-[13.5px] text-gray-500 leading-relaxed">
                   {selectedCategory.description}
                 </p>
               </div>
@@ -353,14 +353,14 @@ export default function HelpCenter({ onClose }) {
                   <div
                     key={art.id}
                     onClick={() => setActiveArticle(art)}
-                    className="px-3.5 py-3 rounded-xl hover:bg-gray-50/80 transition-colors cursor-pointer flex items-center justify-between gap-3 border-b border-gray-100/70 last:border-b-0"
+                    className="px-3 sm:px-3.5 py-2.5 sm:py-3 rounded-xl hover:bg-gray-50/80 transition-colors cursor-pointer flex items-center justify-between gap-3 border-b border-gray-100/70 last:border-b-0"
                   >
                     <div className="flex-1 min-w-0 pr-1">
-                      <div className="font-medium text-[14px] text-gray-900 leading-snug flex items-center gap-1.5">
+                      <div className="font-medium text-[13.5px] sm:text-[14px] text-gray-900 leading-snug flex items-center gap-1.5">
                         <span>{art.title}</span>
                         {art.emoji && <span className="text-sm">{art.emoji}</span>}
                       </div>
-                      <div className="text-[12.5px] text-gray-500 leading-relaxed mt-0.5 line-clamp-2">
+                      <div className="text-[12px] sm:text-[12.5px] text-gray-500 leading-relaxed mt-0.5 line-clamp-2">
                         {art.description}
                       </div>
                     </div>
@@ -385,9 +385,9 @@ export default function HelpCenter({ onClose }) {
   return (
     <div className="flex flex-col h-full bg-white relative">
       {/* Header */}
-      <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shrink-0">
+      <div className="flex justify-between items-center px-4 sm:px-6 py-3.5 sm:py-4 border-b border-gray-100 bg-white sticky top-0 z-10 shrink-0">
         <div className="w-5" />
-        <h2 className="font-semibold text-[17px] text-gray-900">Help center</h2>
+        <h2 className="font-semibold text-[16px] sm:text-[17px] text-gray-900">Help center</h2>
         <button 
           onClick={onClose}
           className="text-gray-500 hover:text-gray-900 transition-colors p-1 -mr-1 rounded-md flex items-center justify-center cursor-pointer"
@@ -401,7 +401,7 @@ export default function HelpCenter({ onClose }) {
       </div>
 
       {/* Pill Search bar matching Gleap reference */}
-      <div className="px-4 pt-3 pb-1 shrink-0 bg-white">
+      <div className="px-3.5 sm:px-4 pt-3 pb-1 shrink-0 bg-white">
         <div className="flex items-center gap-2.5 bg-gray-100/80 hover:bg-gray-100/95 transition-colors rounded-xl px-3.5 py-2.5 border border-transparent focus-within:border-gray-300 focus-within:bg-white">
           <Search size={17} className="text-gray-400 shrink-0" />
           <input 
@@ -415,7 +415,7 @@ export default function HelpCenter({ onClose }) {
       </div>
 
       {/* Categories List matching Screenshot 1 */}
-      <div className="flex-1 overflow-y-auto px-4 pb-28 pt-2">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 pb-28 pt-2">
         {filteredCategories.map((cat) => (
           <div 
             key={cat.id}

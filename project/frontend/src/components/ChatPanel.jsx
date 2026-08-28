@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, Mic, ArrowUp, ThumbsUp, ThumbsDown, Trash2, FileText, Paperclip } from 'lucide-react';
+import { ChevronLeft, Mic, ArrowUp, ThumbsUp, ThumbsDown, Trash2, FileText } from 'lucide-react';
 import ToolCallCard from './ToolCallCard';
+import MarkdownRenderer from './MarkdownRenderer';
+import { cleanSnippet } from '../utils/formatSnippet';
 import { API_URL } from '../api';
 
 /*
@@ -69,7 +71,7 @@ export default function ChatPanel({
           const listStr = localStorage.getItem('gleap_conversations_list');
           let list = listStr ? JSON.parse(listStr) : [];
           const lastMsg = messages[messages.length - 1];
-          const snippet = lastMsg?.content ? (lastMsg.content.slice(0, 50) + '...') : 'New conversation';
+          const snippet = lastMsg?.content ? cleanSnippet(lastMsg.content, 55) : 'New conversation';
           
           const existingIdx = list.findIndex(c => c.id === conversationId);
           const itemData = {
@@ -399,114 +401,43 @@ export default function ChatPanel({
     doSend(input);
   };
 
-  const renderInlineMarkdown = (text) => {
-    // Replace **bold** with <strong>
-    const parts = text.split(/(\*\*.*?\*\*)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
-        return (
-          <strong key={i} className="font-semibold text-gray-900">
-            {part.slice(2, -2)}
-          </strong>
-        );
-      }
-      return part;
-    });
-  };
-
-  const renderFormattedContent = (content, citation) => {
-    const lines = content.split('\n');
-    const elements = [];
-    let currentBullets = [];
-
-    const flushBullets = (key) => {
-      if (currentBullets.length > 0) {
-        const bulletsToRender = [...currentBullets];
-        currentBullets = [];
-        elements.push(
-          <ul key={`ul-${key}`} className="space-y-1.5 pl-1 my-1.5">
-            {bulletsToRender.map((b, bIdx) => (
-              <li key={bIdx} className="flex items-start gap-2 leading-relaxed">
-                <span className="text-gray-900 font-bold mt-0.5 shrink-0">•</span>
-                <span>{renderInlineMarkdown(b)}</span>
-              </li>
-            ))}
-          </ul>
-        );
-      }
-    };
-
-    lines.forEach((line, idx) => {
-      const trimmed = line.trim();
-      if (!trimmed) {
-        flushBullets(idx);
-        return;
-      }
-
-      // Check for bullet prefixes (•, -, *, or 1.)
-      const bulletMatch = trimmed.match(/^([•\-\*]|\d+\.)\s+(.*)$/);
-      if (bulletMatch) {
-        currentBullets.push(bulletMatch[2]);
-      } else {
-        flushBullets(idx);
-        elements.push(
-          <p key={`p-${idx}`} className="leading-relaxed my-1">
-            {renderInlineMarkdown(trimmed)}
-          </p>
-        );
-      }
-    });
-
-    flushBullets('final');
-
-    return (
-      <div className="space-y-1 text-[13.5px] leading-relaxed">
-        {elements}
-        {citation && (
-          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-gray-300/90 text-[10px] font-bold text-gray-700 ml-1.5 align-middle select-none">
-            {citation}
-          </span>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="flex flex-col h-full bg-white relative">
       {/* HEADER: Gleap 'C·' Icon Logo & Deletion Controls */}
-      <div className="h-[66px] flex items-center justify-between px-4 bg-white border-b border-gray-100 shrink-0">
-        <div className="flex items-center gap-2.5">
+      <div className="h-[60px] sm:h-[66px] flex items-center justify-between px-3 sm:px-4 bg-white border-b border-gray-100 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 pr-1">
           <button
             onClick={onBack}
-            className="w-8 h-8 flex items-center justify-center text-gray-700 hover:text-black hover:bg-gray-50 rounded-full transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center text-gray-700 hover:text-black hover:bg-gray-50 rounded-full transition-colors cursor-pointer shrink-0"
             title="Back to messages"
           >
             <ChevronLeft size={21} className="stroke-[2.2]" />
           </button>
 
-          <div className="w-[36px] h-[36px] rounded-[11px] bg-black text-white flex items-center justify-center shrink-0 shadow-xs">
-            <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+          <div className="w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-[11px] bg-black text-white flex items-center justify-center shrink-0 shadow-xs">
+            <svg width="20" height="20" viewBox="0 0 100 100" fill="none">
               <path
-                d="M50 10 C25 10,10 30,10 50 C10 75,30 90,50 90 C55 90,60 89,65 87"
+                d="M 48 18 A 32 32 0 1 0 78 52"
                 stroke="white"
-                strokeWidth="12"
+                strokeWidth="10"
                 strokeLinecap="round"
+                fill="none"
               />
-              <circle cx="70" cy="30" r="7" fill="white" />
+              <circle cx="76" cy="28" r="6" fill="white" />
             </svg>
           </div>
 
-          <div className="flex flex-col">
-            <h2 className="font-bold text-[15px] leading-tight text-gray-900">
+          <div className="flex flex-col min-w-0">
+            <h2 className="font-bold text-[14.5px] sm:text-[15px] leading-tight text-gray-900 truncate">
               Kai
             </h2>
-            <span className="text-[12px] text-gray-400 font-normal leading-tight mt-0.5">
+            <span className="text-[11px] sm:text-[12px] text-gray-400 font-normal leading-tight mt-0.5 truncate">
               Our bot will reply instantly
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
           {/* Clear Conversation Trash Icon */}
           {showClearConfirm ? (
             <div className="flex items-center gap-1.5 bg-red-50 px-2 py-1 rounded-lg border border-red-100 animate-in fade-in">
@@ -564,12 +495,13 @@ export default function ChatPanel({
             <div className="w-12 h-12 rounded-[14px] bg-black text-white flex items-center justify-center mb-3 shadow-xs">
               <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
                 <path
-                  d="M50 10 C25 10,10 30,10 50 C10 75,30 90,50 90 C55 90,60 89,65 87"
+                  d="M 48 18 A 32 32 0 1 0 78 52"
                   stroke="white"
-                  strokeWidth="12"
+                  strokeWidth="10"
                   strokeLinecap="round"
+                  fill="none"
                 />
-                <circle cx="70" cy="30" r="7" fill="white" />
+                <circle cx="76" cy="28" r="6" fill="white" />
               </svg>
             </div>
             <h3 className="font-bold text-[20px] text-gray-900 leading-snug">
@@ -607,18 +539,19 @@ export default function ChatPanel({
 
             {/* ASSISTANT (KAI) MESSAGE */}
             {msg.role === 'assistant' && (
-              <div className="flex flex-col items-start max-w-[92%]">
+              <div className="flex flex-col items-start w-full max-w-[96%] sm:max-w-[92%]">
                 <div className="flex items-center justify-between w-full mb-1.5 ml-1">
                   <div className="flex items-center gap-1.5">
                     <div className="w-4 h-4 rounded-full bg-black text-white flex items-center justify-center shrink-0">
                       <svg width="10" height="10" viewBox="0 0 100 100" fill="none">
                         <path
-                          d="M50 10 C25 10,10 30,10 50 C10 75,30 90,50 90 C55 90,60 89,65 87"
+                          d="M 48 18 A 32 32 0 1 0 78 52"
                           stroke="white"
-                          strokeWidth="14"
+                          strokeWidth="10"
                           strokeLinecap="round"
+                          fill="none"
                         />
-                        <circle cx="70" cy="30" r="8" fill="white" />
+                        <circle cx="76" cy="28" r="6" fill="white" />
                       </svg>
                     </div>
                     <span className="text-[12px] font-semibold text-gray-700">Kai</span>
@@ -626,7 +559,7 @@ export default function ChatPanel({
 
                   <button
                     onClick={() => handleDeleteMessage(index)}
-                    className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 transition-opacity p-1 cursor-pointer mr-2"
+                    className="opacity-70 sm:opacity-0 sm:group-hover:opacity-100 text-gray-300 hover:text-red-500 transition-opacity p-1 cursor-pointer mr-2"
                     title="Delete message"
                   >
                     <Trash2 size={13} />
@@ -644,8 +577,8 @@ export default function ChatPanel({
                 ))}
 
                 {msg.content && (
-                  <div className="bg-[#f2f3f5] text-gray-900 px-4 py-3.5 rounded-[22px] rounded-tl-[6px] text-[14px] leading-relaxed shadow-xs w-full">
-                    {renderFormattedContent(msg.content, msg.citation)}
+                  <div className="bg-[#f2f3f5] text-gray-900 px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-[22px] rounded-tl-[6px] text-[13.5px] sm:text-[14px] leading-relaxed shadow-xs w-full overflow-hidden">
+                    <MarkdownRenderer content={msg.content} citation={msg.citation} />
                   </div>
                 )}
 
@@ -709,11 +642,11 @@ export default function ChatPanel({
       </div>
 
       {/* FLOATING INPUT CARD AT BOTTOM */}
-      <div className="px-3.5 pb-2.5 pt-0 bg-white shrink-0">
-        <div className="rounded-2xl border border-gray-200/90 bg-white p-3 shadow-xs hover:border-gray-300 transition-colors flex flex-col justify-between min-h-[92px]">
+      <div className="px-2.5 sm:px-3.5 pb-2 sm:pb-2.5 pt-0 bg-white shrink-0">
+        <div className="rounded-2xl border border-gray-200/90 bg-white p-2.5 sm:p-3 shadow-xs hover:border-gray-300 transition-colors flex flex-col justify-between min-h-[86px] sm:min-h-[92px]">
           {attachedFile && (
             <div className="flex items-center justify-between bg-gray-50 text-xs text-gray-700 px-2.5 py-1 rounded-md mb-2 border border-gray-200">
-              <span className="truncate max-w-[220px]">📎 {attachedFile.name}</span>
+              <span className="truncate max-w-[170px] sm:max-w-[220px]">📎 {attachedFile.name}</span>
               <button 
                 onClick={() => setAttachedFile(null)} 
                 className="text-gray-400 hover:text-red-500 font-bold ml-2 cursor-pointer"

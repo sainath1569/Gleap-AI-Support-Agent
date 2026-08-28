@@ -183,9 +183,9 @@ export default function Home({ onOpenChat, onAskQuestion, onOpenNewsArticle, scr
           On scroll: Turns into a frosted white blur.
       ======================================================== */}
       <div
-        className="relative shrink-0 px-6 pt-10 pb-20 overflow-hidden"
+        className="relative shrink-0 px-4 sm:px-6 pt-8 sm:pt-10 pb-16 sm:pb-20 overflow-hidden"
         style={{
-          minHeight: '310px',
+          minHeight: '290px',
           background: 'linear-gradient(180deg, #000000 0%, #000000 54%, #18181b 62%, #27272a 70%, #3f3f46 78%, #71717a 86%, #a1a1aa 92%, #e4e4e7 97%, #ffffff 100%)',
         }}
       >
@@ -202,14 +202,14 @@ export default function Home({ onOpenChat, onAskQuestion, onOpenNewsArticle, scr
 
         {/* Logo and close button */}
         <div
-          className="flex justify-between items-center mb-6 relative z-10"
+          className="flex justify-between items-center mb-5 sm:mb-6 relative z-10"
           style={{
             opacity: logoOpacity,
             transition: 'opacity 80ms linear',
           }}
         >
           {/* Logo matching uploaded image: arc from 12 o'clock around left to 3 o'clock with dot at 1:30 */}
-          <svg width="42" height="42" viewBox="0 0 100 100" fill="none" className="shrink-0">
+          <svg width="38" height="38" viewBox="0 0 100 100" fill="none" className="shrink-0 sm:w-[42px] sm:h-[42px]">
             <path
               d="M 48 18 A 32 32 0 1 0 78 52"
               stroke="white"
@@ -223,7 +223,7 @@ export default function Home({ onOpenChat, onAskQuestion, onOpenNewsArticle, scr
           {/* Cross mark matching photo */}
           <button 
             onClick={onClose}
-            className="text-white/80 hover:text-white transition-colors p-1 -mr-1 rounded-md flex items-center justify-center"
+            className="text-white/80 hover:text-white transition-colors p-1 -mr-1 rounded-md flex items-center justify-center cursor-pointer"
             title="Close"
           >
             <svg
@@ -244,17 +244,17 @@ export default function Home({ onOpenChat, onAskQuestion, onOpenNewsArticle, scr
 
         {/* Greeting + heading */}
         <div
-          className="relative z-10 pl-1 mt-[54px]"
+          className="relative z-10 pl-1 mt-8 sm:mt-[54px]"
           style={{
             opacity: headingOpacity,
             transition: 'opacity 80ms linear',
           }}
         >
-          <div className="text-2xl text-white/80 mb-1 font-semibold">
+          <div className="text-xl sm:text-2xl text-white/80 mb-1 font-semibold">
             Hi
           </div>
 
-          <div className="text-[26px] font-semibold leading-tight text-white">
+          <div className="text-[22px] sm:text-[26px] font-semibold leading-tight text-white">
             How can we help you today?
           </div>
         </div>
@@ -400,14 +400,14 @@ export default function Home({ onOpenChat, onAskQuestion, onOpenNewsArticle, scr
         </div>
 
         {/* ACTION PILLS */}
-        <div className="flex gap-2 mb-5">
+        <div className="flex flex-wrap sm:flex-nowrap gap-2 mb-5">
           <button
             onClick={() =>
               onAskQuestion(
                 'I want to report an issue with my account or order'
               )
             }
-            className="bg-white border border-gray-200 px-3.5 py-2 rounded-full text-xs font-semibold flex items-center gap-2 whitespace-nowrap shadow-sm hover:bg-gray-50 text-gray-800 transition-colors"
+            className="bg-white border border-gray-200 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shadow-sm hover:bg-gray-50 text-gray-800 transition-colors cursor-pointer"
           >
             <img
               src={bugIcon}
@@ -423,7 +423,7 @@ export default function Home({ onOpenChat, onAskQuestion, onOpenNewsArticle, scr
                 'I have a feature request or feedback for the team'
               )
             }
-            className="bg-white border border-gray-200 px-3.5 py-2 rounded-full text-xs font-semibold flex items-center gap-2 whitespace-nowrap shadow-sm hover:bg-gray-50 text-gray-800 transition-colors"
+            className="bg-white border border-gray-200 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full text-xs font-semibold flex items-center gap-1.5 sm:gap-2 whitespace-nowrap shadow-sm hover:bg-gray-50 text-gray-800 transition-colors cursor-pointer"
           >
             <img
               src={ideaIcon}
@@ -437,15 +437,15 @@ export default function Home({ onOpenChat, onAskQuestion, onOpenNewsArticle, scr
         {/* NEWS CARD — Matches Gleap's Pipelines Card */}
         <div 
           onClick={() => onOpenNewsArticle?.('pipelines')}
-          className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm mb-6 cursor-pointer hover:shadow-md transition-all group"
+          className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm mb-5 sm:mb-6 cursor-pointer hover:shadow-md transition-all group"
         >
-          <div className="h-44 overflow-hidden relative bg-gray-100">
+          <div className="h-40 sm:h-44 overflow-hidden relative bg-gray-100">
             <img src={heroImg} alt="Pipelines" className="w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-300" />
           </div>
 
-          <div className="p-4 flex items-start justify-between">
+          <div className="p-3.5 sm:p-4 flex items-start justify-between">
             <div className="flex-1 pr-2">
-              <h3 className="font-semibold text-sm mb-1 text-gray-900 group-hover:text-black">
+              <h3 className="font-semibold text-[13.5px] sm:text-sm mb-1 text-gray-900 group-hover:text-black">
                 Pipelines: lightweight CRM boards in Gleap
               </h3>
 

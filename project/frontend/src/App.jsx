@@ -120,10 +120,10 @@ function App() {
   };
 
   return (
-    <div className={isEmbedMode ? "w-full h-full bg-transparent overflow-hidden" : "relative min-h-screen bg-[#FAF8F5] text-[#1F1E1D] overflow-hidden select-none"}>
+    <div className={isEmbedMode ? "w-full h-full bg-transparent overflow-hidden" : "relative min-h-screen bg-[#FAF8F5] text-[#1F1E1D] overflow-x-hidden select-none"}>
       {/* CLAUDE-STYLE BACKGROUND EXPERIENCE (Hidden in embed iframe mode) */}
       {!isEmbedMode && (
-        <div className="min-h-screen flex flex-col justify-between p-8 sm:p-12 md:p-16 relative">
+        <div className="min-h-screen flex flex-col justify-between p-5 sm:p-12 md:p-16 relative overflow-hidden">
         
         {/* Warm Ambient Glows */}
         <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#F3ECE0] opacity-70 blur-3xl pointer-events-none" />
@@ -133,8 +133,17 @@ function App() {
         {/* Top Minimal Editorial Nav */}
         <header className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#1F1E1D] text-white flex items-center justify-center font-serif text-lg font-bold shadow-xs">
-              C·
+            <div className="w-9 h-9 rounded-xl bg-[#1F1E1D] text-white flex items-center justify-center shadow-xs">
+              <svg width="20" height="20" viewBox="0 0 100 100" fill="none">
+                <path
+                  d="M 48 18 A 32 32 0 1 0 78 52"
+                  stroke="white"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+                <circle cx="76" cy="28" r="6" fill="white" />
+              </svg>
             </div>
             <span className="font-editorial text-2xl font-bold tracking-tight text-[#1F1E1D]">
               Gleap
@@ -148,7 +157,7 @@ function App() {
         </header>
 
         {/* Center Claude-Inspired Editorial Message */}
-        <main className="relative z-10 max-w-3xl my-auto py-12">
+        <main className="relative z-10 max-w-3xl my-auto py-10 sm:py-12">
           {/* Claude Hand-Drawn Sparkle Accent */}
           <div className="flex items-center gap-2 mb-4">
             <svg width="24" height="24" viewBox="0 0 36 36" fill="none" className="text-[#CC785C]">
@@ -160,12 +169,12 @@ function App() {
           </div>
 
           {/* Headline */}
-          <h1 className="font-editorial text-5xl sm:text-6xl md:text-7xl font-normal text-[#1F1E1D] tracking-tight leading-[1.08] mb-6">
+          <h1 className="font-editorial text-4xl sm:text-6xl md:text-7xl font-normal text-[#1F1E1D] tracking-tight leading-[1.08] mb-6">
             Hey! Look into the <br />
             <span className="italic text-[#CC785C] font-normal">bottom right corner</span>
           </h1>
 
-          <p className="text-[#686359] text-lg sm:text-xl max-w-xl font-editorial leading-relaxed mb-8">
+          <p className="text-[#686359] text-base sm:text-xl max-w-xl font-editorial leading-relaxed mb-8">
             Kai, our customer support AI assistant, is waiting there to answer documentation questions, query real-time weather, track orders, or generate pricing quotes.
           </p>
 
@@ -199,8 +208,8 @@ function App() {
           </div>
         </main>
 
-        {/* Claude Style Hand-Drawn Curved Arrow swooping towards bottom right corner */}
-        <div className="absolute right-14 bottom-24 sm:right-28 sm:bottom-28 pointer-events-none z-20">
+        {/* Claude Style Hand-Drawn Curved Arrow swooping towards bottom right corner (hidden on mobile) */}
+        <div className="hidden sm:block absolute right-14 bottom-24 sm:right-28 sm:bottom-28 pointer-events-none z-20">
           <div className="relative">
             {/* Handwritten Label */}
             <div className="absolute -top-12 -left-16 sm:-left-24 text-right">
@@ -239,7 +248,7 @@ function App() {
         </div>
 
         {/* Minimal Footer */}
-        <footer className="relative z-10 text-xs text-[#9B9284] flex items-center justify-between border-t border-[#EAE2D4] pt-4">
+        <footer className="relative z-10 text-xs text-[#9B9284] flex flex-col sm:flex-row items-start sm:items-center justify-between border-t border-[#EAE2D4] pt-4 gap-2">
           <span>Gleap AI Autonomous Support Agent</span>
           <span>RAG • Qdrant Cloud • Tools • Groq</span>
         </footer>
@@ -247,11 +256,11 @@ function App() {
       )}
 
       {/* Floating Widget & Launcher */}
-      <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end">
+      <div className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end">
         {/* Widget Panel */}
         {isOpen && (
           <div 
-            className={`${isArticleOpen ? 'w-[720px] max-w-[94vw]' : 'w-[430px]'} h-[680px] max-h-[85vh] bg-white rounded-2xl flex flex-col overflow-hidden mb-4 relative transition-[width] duration-300 ease-in-out`}
+            className={`${isArticleOpen ? 'w-[calc(100vw-1.5rem)] sm:w-[720px] max-w-[96vw]' : 'w-[calc(100vw-1.5rem)] sm:w-[430px] max-w-[430px]'} h-[88vh] sm:h-[680px] max-h-[92vh] sm:max-h-[85vh] bg-white rounded-2xl flex flex-col overflow-hidden mb-3 sm:mb-4 relative transition-[width] duration-300 ease-in-out`}
             style={{
               boxShadow: '0 25px 60px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)',
             }}
@@ -266,9 +275,9 @@ function App() {
 
             {/* Bottom Navigation Bar - only hidden when actively in a chat thread */}
             {activeConversationId === null && (
-              <div className="absolute bottom-2.5 left-3 right-3 z-30 pointer-events-auto">
+              <div className="absolute bottom-2 sm:bottom-2.5 left-2 sm:left-3 right-2 sm:right-3 z-30 pointer-events-auto">
                 <div 
-                  className="rounded-full flex justify-between items-center px-1.5 py-1.5 transition-all"
+                  className="rounded-full flex justify-between items-center px-1 sm:px-1.5 py-1 sm:py-1.5 transition-all"
                   style={{
                     backgroundColor: 'rgba(255, 255, 255, 0.45)',
                     backdropFilter: 'blur(20px)',
@@ -330,11 +339,11 @@ function App() {
         {/* Floating Launcher Button */}
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="w-14 h-14 bg-black text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+          className="w-13 h-13 sm:w-14 sm:h-14 bg-black text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
           aria-label="Toggle Support Widget"
         >
           {isOpen ? <ChevronDown size={26} /> : (
-            <svg width="30" height="30" viewBox="0 0 100 100" fill="none">
+            <svg width="28" height="28" viewBox="0 0 100 100" fill="none">
               <path
                 d="M 48 18 A 32 32 0 1 0 78 52"
                 stroke="white"
@@ -360,16 +369,16 @@ function NavItem({ active, label, iconInactive, iconActive, onClick }) {
   return (
     <button 
       onClick={onClick}
-      className={`flex-1 flex flex-col items-center justify-center py-1 px-1 rounded-full transition-all duration-150 cursor-pointer ${
+      className={`flex-1 flex flex-col items-center justify-center py-1 px-0.5 sm:px-1 rounded-full transition-all duration-150 cursor-pointer min-w-0 ${
         active 
           ? 'text-black' 
           : 'text-gray-500 hover:text-gray-800'
       }`}
     >
-      <div className="flex items-center justify-center h-6 w-6 mb-0.5">
+      <div className="flex items-center justify-center h-5 sm:h-6 w-5 sm:w-6 mb-0.5 shrink-0">
         {active ? iconActive : iconInactive}
       </div>
-      <span className={`text-[11px] leading-tight tracking-tight ${active ? 'font-bold text-black' : 'font-normal text-gray-500'}`}>
+      <span className={`text-[10px] sm:text-[11px] leading-tight tracking-tight truncate max-w-full ${active ? 'font-bold text-black' : 'font-normal text-gray-500'}`}>
         {label}
       </span>
     </button>
