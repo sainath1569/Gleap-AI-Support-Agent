@@ -12,9 +12,20 @@ from rag import ingest_document, get_real_qdrant_sources, delete_document_from_q
 
 app = FastAPI(title="NOVA / Gleap Backend")
 
+import os
+
+# Dynamic CORS configuration from environment
+frontend_url = os.getenv("FRONTEND_URL", "")
+cors_origins_raw = os.getenv("CORS_ORIGINS", "*")
+origins = [o.strip() for o in cors_origins_raw.split(",") if o.strip()]
+if frontend_url and frontend_url not in origins and "*" not in origins:
+    origins.append(frontend_url.strip())
+if not origins or "*" in origins:
+    origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

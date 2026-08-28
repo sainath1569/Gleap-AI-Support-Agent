@@ -43,7 +43,9 @@ function App() {
   }, [isOpen, isEmbedMode]);
 
   const handleCopyScript = () => {
-    const embedScriptTag = `<script src="${window.location.origin}/widget.js" defer></script>`;
+    const rawFrontendUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin;
+    const frontendUrl = rawFrontendUrl.replace(/\/+$/, "");
+    const embedScriptTag = `<script src="${frontendUrl}/widget.js" defer></script>`;
     try {
       navigator.clipboard.writeText(embedScriptTag);
       setCopiedScript(true);

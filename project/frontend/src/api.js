@@ -1,4 +1,7 @@
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+// Base backend API URL configured via Vite environment variable VITE_BACKEND_URL
+const rawBackendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+export const BACKEND_URL = rawBackendUrl.replace(/\/+$/, "");
+export const API_URL = `${BACKEND_URL}/api`;
 
 export async function uploadKnowledge(file) {
   const formData = new FormData();
