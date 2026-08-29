@@ -82,30 +82,30 @@ async def add_security_headers(request: Request, call_next):
     return response
 
 # ----------------------------------------------------
-# CORS CONFIGURATION
+# CORS CONFIGURATION (DYNAMICALLY CONFIGURED VIA ENV)
 # ----------------------------------------------------
+cors_origins_raw = os.getenv('CORS_ORIGINS', '*').strip()
 frontend_url = os.getenv('FRONTEND_URL', '').strip()
-cors_origins_raw = os.getenv('CORS_ORIGINS', '').strip()
 
-if cors_origins_raw and cors_origins_raw != '*':
-    origins = [o.strip() for o in cors_origins_raw.split(',') if o.strip()]
+# If CORS_ORIGINS is '*' or unset, reflect any requesting origin (Vercel, localhost, custom domains)
+if cors_origins_raw == '*' or not cors_origins_raw:
+    allow_origin_regex = r'.*'
+    origins = []
 else:
-    origins = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ]
-
-if frontend_url and frontend_url not in origins:
-    origins.append(frontend_url)
+    # Explicit comma-separated origins provided in environment
+    origins = [o.strip().rstrip('/') for o in cors_origins_raw.split(',') if o.strip()]
+    if frontend_url and frontend_url.rstrip('/') not in origins:
+        origins.append(frontend_url.rstrip('/'))
+    allow_origin_regex = None
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins if not allow_origin_regex else [],
+    allow_origin_regex=allow_origin_regex,
     allow_credentials=True,
-    allow_methods=['GET', 'POST', 'OPTIONS'],
-    allow_headers=['Content-Type', 'Authorization', 'X-API-Key', 'Accept'],
+    allow_methods=['*'],
+    allow_headers=['*'],
+    expose_headers=['*'],
 )
 
 # ----------------------------------------------------
