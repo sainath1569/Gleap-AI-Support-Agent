@@ -8,7 +8,8 @@ from pymongo.errors import PyMongoError, ServerSelectionTimeoutError, Connection
 
 logger = logging.getLogger("nova-backend.db")
 
-MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017").strip().strip("'\"")
+# Configured strictly from environment variables
+MONGODB_URI = os.getenv("MONGODB_URI", "").strip().strip("'\"")
 MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "gleap_support").strip().strip("'\"")
 
 class MongoConversationManager:
@@ -24,7 +25,7 @@ class MongoConversationManager:
     """
     def __init__(self, uri: Optional[str] = None, db_name: Optional[str] = None, client: Optional[MongoClient] = None):
         raw_uri = uri or MONGODB_URI
-        self.uri = raw_uri.strip().strip("'\"") if raw_uri else "mongodb://localhost:27017"
+        self.uri = raw_uri.strip().strip("'\"") if raw_uri else ""
         raw_db = db_name or MONGODB_DATABASE
         self.db_name = raw_db.strip().strip("'\"") if raw_db else "gleap_support"
         self.client: Optional[MongoClient] = client
@@ -34,8 +35,10 @@ class MongoConversationManager:
         
         if client is not None:
             self._init_with_client(client)
-        else:
+        elif self.uri:
             self._connect()
+        else:
+            logger.warning("[DATABASE NOTICE] No MONGODB_URI configured in environment. Resilient fallback active.")
 
     def _connect(self):
         try:
