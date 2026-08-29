@@ -49,6 +49,7 @@ export default function ChatPanel({
   const recognitionRef = useRef(null);
   const baseInputRef = useRef('');
   const hasSentPending = useRef(false);
+  const abortControllerRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
@@ -60,6 +61,14 @@ export default function ChatPanel({
   useEffect(() => {
     scrollToBottom();
   }, [messages, isStreaming]);
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   // Persist all chatting messages into device local memory (localStorage)
   useEffect(() => {
@@ -257,8 +266,15 @@ export default function ChatPanel({
 
     setMessages((prev) => [...prev, userMessage]);
 
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       const response = await fetch(`${API_URL}/chat`, {
+        signal: controller.signal,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

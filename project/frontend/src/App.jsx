@@ -38,7 +38,15 @@ function App() {
   // Sync widget expanded/collapsed state with the host window iframe
   useEffect(() => {
     if (isEmbedMode && window.parent && window.parent !== window) {
-      window.parent.postMessage({ type: 'GLEAP_WIDGET_STATE', isOpen }, '*');
+      let targetOrigin = "*";
+      try {
+        if (document.referrer) {
+          targetOrigin = new URL(document.referrer).origin;
+        }
+      } catch (e) {
+        targetOrigin = "*";
+      }
+      window.parent.postMessage({ type: 'GLEAP_WIDGET_STATE', isOpen }, targetOrigin);
     }
   }, [isOpen, isEmbedMode]);
 

@@ -1,0 +1,46 @@
+﻿version: '3.8'
+
+services:
+  mongo:
+    image: mongo:7-alpine
+    container_name: nova-mongo
+    ports:
+      - "27017:27017"
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nova-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - GROK_API_KEY=${GROK_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - QDRANT_URL=${QDRANT_URL}
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-gleap_admin_secret_key_123}
+      - ALLOW_UNAUTHENTICATED_ADMIN=${ALLOW_UNAUTHENTICATED_ADMIN:-true}
+      - MONGODB_URI=mongodb://mongo:27017
+      - MONGODB_DATABASE=gleap_support
+      - FRONTEND_URL=http://localhost:5173
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nova-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mongo_data:

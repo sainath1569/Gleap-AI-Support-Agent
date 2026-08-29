@@ -20,10 +20,10 @@ graph TD;
   subgraph RAG Pipeline
     API -. "search_knowledge" .-> Hybrid[Hybrid Search];
     Hybrid --> Qdrant[(Qdrant Vector DB)];
-    Hybrid --> BM25[(In-memory BM25)];
-    Qdrant --> Rerank[Reranker];
-    BM25 --> Rerank;
-    Rerank --> Tool;
+    Hybrid --> BM25[(Normalized BM25)];
+    Qdrant --> RRF[RRF Rank Fusion];
+    BM25 --> RRF;
+    RRF --> Tool;
   end
 ```
 
@@ -40,9 +40,9 @@ graph TD;
 - **`tools.py`**: Defines standard customer support tools with dummy data (`get_customer`, `get_order_status`, etc.) and exposes their JSON Schema for the LLM.
 
 ### RAG Pipeline (`rag.py`)
-- **Ingestion**: Uploaded documents (TXT, PDF, MD) have text extracted and split into 500-token chunks. Gemini generates dense embeddings (768d) for each chunk. The chunks are saved in both a Qdrant collection and an in-memory BM25 corpus.
-- **Hybrid Retrieval**: When the LLM uses the `search_knowledge` tool, the user query is embedded. We perform both a dense cosine similarity search in Qdrant and a sparse keyword search using BM25.
-- **Reranking**: Scores from Qdrant and BM25 are normalized and combined using configurable weights (e.g., 60% Dense / 40% Sparse). We sort the results and feed only the top 3 highest-quality chunks back to the LLM to minimize prompt bloating.
+- **Ingestion & Chunking**: Uploaded documents (TXT, PDF, MD) undergo sentence-aware chunking (~350 words) with a **60-word sliding window overlap** and **section heading extraction** (`[Section: {heading}]`). Gemini generates dense 768d embeddings (`models/gemini-embedding-001`) for each chunk stored in Qdrant, paired with a normalized BM25 corpus.
+- **Hybrid Retrieval & Query Rewriting**: Dense vector search in Qdrant (filtered at similarity `score >= 0.30`) is combined with normalized sparse BM25 keyword search. Follow-up turns automatically rewrite and expand queries using preceding context.
+- **Reciprocal Rank Fusion (RRF)**: Rankings from Qdrant and BM25 are combined using standard Reciprocal Rank Fusion ($S_{rrf} = \sum \frac{1}{k + r(d)}$). Results are sorted and the top 4 highest-quality chunks (`rerank_k=4`) are fed to the LLM context.
 
 ## Setup Instructions
 

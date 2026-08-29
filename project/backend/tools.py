@@ -1,5 +1,7 @@
+import re
 import json
 import httpx
+import urllib.parse
 from typing import Dict, Any, List
 
 # Mock Data for Tools
@@ -52,18 +54,28 @@ SUBSCRIPTIONS = {
 
 SUPPORT_TICKETS = []
 
+EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+CITY_REGEX = re.compile(r"^[a-zA-Z0-9\s,\.\-']{1,60}$")
+
 # Tool Functions
 
 def get_weather(city: str) -> Dict[str, Any]:
-    """Get live weather report and temperature for any city using a free, keyless service."""
-    city_clean = city.strip().title()
+    """Get live weather report and temperature for any city using a keyless service with SSRF protection."""
+    if not city or not isinstance(city, str):
+        return {"error": "Invalid city parameter."}
+
+    city_clean = city.strip()
+    if not CITY_REGEX.match(city_clean):
+        return {"error": "City name contains invalid characters."}
+
+    encoded_city = urllib.parse.quote(city_clean)
     try:
-        r = httpx.get(f"https://wttr.in/{city_clean}?format=j1", timeout=3.5)
+        r = httpx.get(f"https://wttr.in/{encoded_city}?format=j1", timeout=3.5)
         if r.status_code == 200:
             data = r.json()
             curr = data.get("current_condition", [{}])[0]
             return {
-                "city": city_clean,
+                "city": city_clean.title(),
                 "temperature": f"{curr.get('temp_C', '24')}°C ({curr.get('temp_F', '75')}°F)",
                 "condition": curr.get("weatherDesc", [{}])[0].get("value", "Clear sky"),
                 "humidity": f"{curr.get('humidity', '55')}%",
@@ -73,7 +85,7 @@ def get_weather(city: str) -> Dict[str, Any]:
         pass
         
     return {
-        "city": city_clean,
+        "city": city_clean.title(),
         "temperature": "24°C (75°F)",
         "condition": "Sunny with light breeze",
         "humidity": "52%",
@@ -89,7 +101,7 @@ def check_service_status(service_name: str = "all") -> Dict[str, Any]:
         "session_replay": {"status": "Operational", "uptime": "99.91%", "latency": "55ms"},
         "webhooks": {"status": "Operational", "uptime": "99.99%", "latency": "22ms"}
     }
-    key = service_name.strip().lower()
+    key = str(service_name).strip().lower() if service_name else "all"
     if key in services:
         return {"service": key, **services[key]}
     return {
@@ -99,16 +111,23 @@ def check_service_status(service_name: str = "all") -> Dict[str, Any]:
     }
 
 def calculate_pricing(plan_name: str, team_members: int = 1, billing_cycle: str = "monthly") -> Dict[str, Any]:
-    """Calculate customized pricing quote based on team size and billing cycle."""
+    """Calculate customized pricing quote based on team size and billing cycle with parameter validation."""
     base_prices = {"free": 0, "starter": 29, "growth": 99, "enterprise": 299}
-    key = plan_name.strip().lower()
+    key = str(plan_name).strip().lower()
     base = base_prices.get(key, 29)
     extra_seat_price = 10 if key in ["starter", "growth"] else 0
-    seats = max(1, team_members)
+    
+    try:
+        seats = int(team_members)
+    except (ValueError, TypeError):
+        seats = 1
+        
+    seats = max(1, min(seats, 10000))
     extra_seats = max(0, seats - 3 if key == "starter" else 0)
     monthly_total = base + (extra_seats * extra_seat_price)
     
-    if billing_cycle.lower().startswith("ann"):
+    cycle = str(billing_cycle).strip().lower()
+    if cycle.startswith("ann"):
         discounted_annual = round(monthly_total * 12 * 0.8)
         return {
             "plan": plan_name.title(),
@@ -126,30 +145,63 @@ def calculate_pricing(plan_name: str, team_members: int = 1, billing_cycle: str 
     }
 
 def get_customer(email: str) -> Dict[str, Any]:
-    """Get customer profile and account details by email."""
-    if email in CUSTOMERS:
-        return CUSTOMERS[email]
-    return {"error": f"Customer '{email}' not found."}
+    """Get customer profile and account details by email with email format validation."""
+    if not email or not isinstance(email, str):
+        return {"error": "Invalid email parameter."}
+        
+    clean_email = email.strip().lower()
+    if not EMAIL_REGEX.match(clean_email):
+        return {"error": "Invalid email address format."}
+        
+    if clean_email in CUSTOMERS:
+        return CUSTOMERS[clean_email]
+    return {"error": f"Customer '{clean_email}' not found."}
 
 def get_order_status(order_id: str) -> Dict[str, Any]:
-    """Get shipping tracking and delivery estimate for an order ID."""
-    if order_id in ORDERS:
-        return ORDERS[order_id]
-    return {"error": f"Order '{order_id}' not found."}
+    """Get shipping tracking and delivery estimate for an order ID with format validation."""
+    if not order_id or not isinstance(order_id, str):
+        return {"error": "Invalid order ID."}
+        
+    clean_id = order_id.strip().upper()
+    if len(clean_id) > 32 or not re.match(r"^[A-Z0-9\-]+$", clean_id):
+        return {"error": "Order ID contains invalid format."}
+        
+    if clean_id in ORDERS:
+        return ORDERS[clean_id]
+    return {"error": f"Order '{clean_id}' not found."}
 
 def get_subscription(email: str) -> Dict[str, Any]:
-    """Get subscription tier, status, and renewal dates."""
-    if email in SUBSCRIPTIONS:
-        return SUBSCRIPTIONS[email]
-    return {"error": f"No active subscription found for '{email}'."}
+    """Get subscription tier, status, and renewal dates with email validation."""
+    if not email or not isinstance(email, str):
+        return {"error": "Invalid email parameter."}
+        
+    clean_email = email.strip().lower()
+    if not EMAIL_REGEX.match(clean_email):
+        return {"error": "Invalid email address format."}
+        
+    if clean_email in SUBSCRIPTIONS:
+        return SUBSCRIPTIONS[clean_email]
+    return {"error": f"No active subscription found for '{clean_email}'."}
 
 def create_support_ticket(email: str, issue: str) -> Dict[str, Any]:
-    """Open a tracked customer support ticket in the system."""
+    """Open a tracked customer support ticket with email and input validation."""
+    if not email or not isinstance(email, str):
+        return {"error": "Invalid email parameter."}
+        
+    clean_email = email.strip().lower()
+    if not EMAIL_REGEX.match(clean_email):
+        return {"error": "Invalid email address format."}
+        
+    if not issue or not isinstance(issue, str):
+        return {"error": "Issue description cannot be empty."}
+        
+    clean_issue = issue.strip()[:1000]
+    
     ticket_id = f"TICKET-{1000 + len(SUPPORT_TICKETS) + 1}"
     ticket = {
         "ticket_id": ticket_id,
-        "email": email,
-        "issue": issue,
+        "email": clean_email,
+        "issue": clean_issue,
         "status": "open",
         "priority": "normal"
     }
@@ -157,7 +209,7 @@ def create_support_ticket(email: str, issue: str) -> Dict[str, Any]:
     return {
         "ticket_id": ticket_id,
         "status": "open",
-        "message": f"Support ticket {ticket_id} opened successfully for {email}."
+        "message": f"Support ticket {ticket_id} opened successfully for {clean_email}."
     }
 
 # Tool Definitions (JSON Schema for OpenAI / Groq function calling)

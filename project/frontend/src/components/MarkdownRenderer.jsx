@@ -163,16 +163,24 @@ export default function MarkdownRenderer({ content, citation }) {
           ),
 
           // Links
-          a: ({ href, children }) => (
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline underline-offset-2 break-all font-medium transition-colors"
-            >
-              {children}
-            </a>
-          ),
+          a: ({ href, children }) => {
+            const isSafeUrl = typeof href === 'string' && (
+              href.startsWith('http://') || 
+              href.startsWith('https://') || 
+              href.startsWith('mailto:')
+            );
+            const safeHref = isSafeUrl ? href : '#';
+            return (
+              <a
+                href={safeHref}
+                target={isSafeUrl ? "_blank" : "_self"}
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline underline-offset-2 break-all font-medium transition-colors"
+              >
+                {children}
+              </a>
+            );
+          },
 
           // Code blocks & inline code
           code: ({ className, children, ...props }) => {
