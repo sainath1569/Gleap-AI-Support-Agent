@@ -8,8 +8,8 @@ from pymongo.errors import PyMongoError, ServerSelectionTimeoutError, Connection
 
 logger = logging.getLogger("nova-backend.db")
 
-MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017").strip()
-MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "gleap_support").strip()
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017").strip().strip("'\"")
+MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "gleap_support").strip().strip("'\"")
 
 class MongoConversationManager:
     """
@@ -18,13 +18,15 @@ class MongoConversationManager:
     Features:
     - Unique index on conversation_id
     - Descending index on updated_at
-    - Connection timeout handling (serverSelectionTimeoutMS=2000)
+    - Connection timeout handling (serverSelectionTimeoutMS=5000)
     - Graceful in-memory runtime fallback on temporary database failure
     - Message timestamps and last_snippet preservation
     """
     def __init__(self, uri: Optional[str] = None, db_name: Optional[str] = None, client: Optional[MongoClient] = None):
-        self.uri = uri or MONGODB_URI
-        self.db_name = db_name or MONGODB_DATABASE
+        raw_uri = uri or MONGODB_URI
+        self.uri = raw_uri.strip().strip("'\"") if raw_uri else "mongodb://localhost:27017"
+        raw_db = db_name or MONGODB_DATABASE
+        self.db_name = raw_db.strip().strip("'\"") if raw_db else "gleap_support"
         self.client: Optional[MongoClient] = client
         self.collection = None
         self._memory_fallback: Dict[str, List[Dict[str, Any]]] = {}
